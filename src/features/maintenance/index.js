@@ -15,7 +15,7 @@ async function checkMaintenance(postedNews) {
 
     const channel = await client.channels.fetch(process.env.NOTIFICATION_CHANNEL_ID);
 
-    const newsUrl = `https://www.nexon.com/maplestory/news/maintenance/detail/${latestPost.id}`;
+    const newsUrl = `https://www.nexon.com/maplestory/news/maintenance/${latestPost.id}`;
     const detail = await fetchPostDetail(latestPost.id);
     const message = buildMessage(detail, newsUrl);
 
