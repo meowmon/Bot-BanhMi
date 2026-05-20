@@ -29,6 +29,8 @@ client.once("clientReady", async () => {
   );
 
   try {
+    // Xóa global commands cũ (tránh duplicate với guild commands)
+    await rest.put(Routes.applicationCommands(client.user.id), { body: [] });
     await rest.put(
       Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID),
       { body: commandData }
