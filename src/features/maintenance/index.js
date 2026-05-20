@@ -27,7 +27,7 @@ async function checkMaintenance(postedNews) {
 }
 
 function scheduleMaintenance(postedNews) {
-  cron.schedule("*/5 * * * *", async () => {
+  cron.schedule("0 */2 * * *", async () => {
     console.log("Checking maintenance...");
     await checkMaintenance(postedNews);
   });
