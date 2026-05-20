@@ -29,9 +29,10 @@ client.once("clientReady", async () => {
   );
 
   try {
-    await rest.put(Routes.applicationCommands(client.user.id), {
-      body: commandData,
-    });
+    await rest.put(
+      Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID),
+      { body: commandData }
+    );
     console.log("✅ Slash commands registered.");
   } catch (err) {
     console.error("Failed to register slash commands:", err);
