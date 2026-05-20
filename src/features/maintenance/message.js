@@ -15,27 +15,45 @@ function parseMaintenanceTimes(summary, bodyText) {
   );
   const durationMatch = bodyText.match(/last approximately (\d+) hours?/);
 
-  if (!startMatch || !endMatch) return null;
+  if (!startMatch) return null;
 
   const startOffset = TZ_OFFSETS[startMatch[3]] ?? 0;
   const startUtcMs =
     Date.parse(`${startMatch[1]} ${startMatch[2]} UTC`) -
     startOffset * 3600 * 1000;
 
-  const endOffset = TZ_OFFSETS[endMatch[2]] ?? 0;
-  let endUtcMs =
-    Date.parse(`${startMatch[1]} ${endMatch[1]} UTC`) -
-    endOffset * 3600 * 1000;
-  if (endUtcMs <= startUtcMs) endUtcMs += 24 * 3600 * 1000;
+  if (endMatch) {
+    const endOffset = TZ_OFFSETS[endMatch[2]] ?? 0;
+    let endUtcMs =
+      Date.parse(`${startMatch[1]} ${endMatch[1]} UTC`) -
+      endOffset * 3600 * 1000;
+    if (endUtcMs <= startUtcMs) endUtcMs += 24 * 3600 * 1000;
 
-  const duration = durationMatch
-    ? parseInt(durationMatch[1])
-    : Math.round((endUtcMs - startUtcMs) / 3600000);
+    const duration = durationMatch
+      ? parseInt(durationMatch[1])
+      : Math.round((endUtcMs - startUtcMs) / 3600000);
+
+    return {
+      startUnix: Math.floor(startUtcMs / 1000),
+      endUnix: Math.floor(endUtcMs / 1000),
+      duration,
+    };
+  }
+
+  if (durationMatch) {
+    const duration = parseInt(durationMatch[1]);
+    const endUtcMs = startUtcMs + duration * 3600 * 1000;
+    return {
+      startUnix: Math.floor(startUtcMs / 1000),
+      endUnix: Math.floor(endUtcMs / 1000),
+      duration,
+    };
+  }
 
   return {
     startUnix: Math.floor(startUtcMs / 1000),
-    endUnix: Math.floor(endUtcMs / 1000),
-    duration,
+    endUnix: null,
+    duration: null,
   };
 }
 
@@ -53,10 +71,13 @@ function buildMessage(detail, newsUrl) {
 
   if (times) {
     const { startUnix, endUnix, duration } = times;
-    return `${rolePing} Hế lô mọi người! Maplestory GMS sẽ bảo trì ${duration} tiếng từ <t:${startUnix}:f> đến <t:${endUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+    if (endUnix && duration) {
+      return `Hế lô mọi người! Maplestory GMS sẽ bảo trì ${duration} tiếng từ <t:${startUnix}:f> đến <t:${endUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+    }
+    return `$ Hế lô mọi người! Maplestory GMS sẽ bảo trì từ <t:${startUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
   }
 
-  return `${rolePing} bảo trì!\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+  return `$ bảo trì!\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
 }
 
 module.exports = { buildMessage };
