@@ -11,8 +11,9 @@ const roadmapCommand = require("./src/features/roadmap");
 const sharecashCommand = require("./src/features/sharecash");
 const maintCommand = require("./src/features/maint");
 const jobdiscCommand = require("./src/features/jobdisc");
+const xuancutCommand = require("./src/features/xuancut");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand, xuancutCommand];
 
 const postedNews = loadPostedNews();
 
