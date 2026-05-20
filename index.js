@@ -29,12 +29,17 @@ client.once("clientReady", async () => {
   );
 
   try {
-    // Xóa global commands cũ (tránh duplicate với guild commands)
-    await rest.put(Routes.applicationCommands(client.user.id), { body: [] });
-    await rest.put(
-      Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID),
-      { body: commandData }
-    );
+    // Xóa guild commands nếu có (dọn duplicate)
+    if (process.env.GUILD_ID) {
+      await rest.put(
+        Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID),
+        { body: [] }
+      );
+    }
+    // Register global commands
+    await rest.put(Routes.applicationCommands(client.user.id), {
+      body: commandData,
+    });
     console.log("✅ Slash commands registered.");
   } catch (err) {
     console.error("Failed to register slash commands:", err);
