@@ -80,4 +80,4 @@ function buildMessage(detail, newsUrl) {
   return `${rolePing} bảo trì!\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
 }
 
-module.exports = { buildMessage };
+module.exports = { buildMessage, parseMaintenanceTimes };
