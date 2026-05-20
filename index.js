@@ -13,7 +13,9 @@ client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag}`);
 
   const channel = await client.channels.fetch(process.env.NOTIFICATION_CHANNEL_ID);
-//   await channel.send("✅ Con bot này tày đã trở lại");
+
+  const testChannel = await client.channels.fetch(process.env.TEST_CHANNEL_ID);
+  await testChannel.send("✅ Con bot này tày đã trở lại");
 
   await checkMaintenance(postedNews);
   scheduleMaintenance(postedNews);
