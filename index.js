@@ -28,7 +28,7 @@ client.once("clientReady", async () => {
       .setDescription(cmd.data.description)
       .toJSON()
   );
- 
+
   try {
     // Xóa guild commands nếu có (dọn duplicate)
     if (process.env.GUILD_ID) {
