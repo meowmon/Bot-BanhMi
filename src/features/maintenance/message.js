@@ -72,12 +72,12 @@ function buildMessage(detail, newsUrl) {
   if (times) {
     const { startUnix, endUnix, duration } = times;
     if (endUnix && duration) {
-      return `Hế lô mọi người! Maplestory GMS sẽ bảo trì ${duration} tiếng từ <t:${startUnix}:f> đến <t:${endUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+      return `${rolePing} Hế lô mọi người! Maplestory GMS sẽ bảo trì ${duration} tiếng từ <t:${startUnix}:f> đến <t:${endUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
     }
-    return `$ Hế lô mọi người! Maplestory GMS sẽ bảo trì từ <t:${startUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+    return `${rolePing} Hế lô mọi người! Maplestory GMS sẽ bảo trì từ <t:${startUnix}:f>\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
   }
 
-  return `$ bảo trì!\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
+  return `${rolePing} bảo trì!\nThông tin chi tiết có thể đọc tại [ĐÂY](${newsUrl})`;
 }
 
 module.exports = { buildMessage };
