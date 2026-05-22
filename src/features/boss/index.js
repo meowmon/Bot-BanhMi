@@ -4,7 +4,7 @@ const bosses = require("./data");
 
 const data = {
   name: "boss",
-  description: "Xem thông tin một boss MapleStory",
+  description: "Xem thông tin boss MapleStory",
   options: [
     {
       type: "string",

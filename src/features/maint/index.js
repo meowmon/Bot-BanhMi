@@ -23,25 +23,25 @@ async function execute(interaction) {
     .replace(/\s+/g, " ")
     .trim();
 
-  const times = parseMaintenanceTimes(detail.summary, bodyText);
-
-  if (!times) {
-    return interaction.editReply(
-      `Không thể lấy thời gian bảo trì. Xem chi tiết tại: ${newsUrl}`
-    );
-  }
-
-  const { startUnix, endUnix, duration } = times;
-  const nowUnix = Math.floor(Date.now() / 1000);
-
-  // Check if maintenance has already ended
-  const isOver = endUnix ? endUnix < nowUnix : startUnix < nowUnix - 3600;
-  if (isOver) {
-    return interaction.editReply("Hiện không có lịch bảo trì sắp tới.");
-  }
-
+    
+    const { startUnix, endUnix, duration } = times;
+    const nowUnix = Math.floor(Date.now() / 1000);
+    
+    // Check if maintenance has already ended
+    const isOver = endUnix ? endUnix < nowUnix : startUnix < nowUnix - 3600;
+    if (isOver) {
+      return interaction.editReply("Chưa có thông tin bảo trì tiếp theo.");
+    }
+    
+    const times = parseMaintenanceTimes(detail.summary, bodyText);
+  
+    if (!times) {
+      return interaction.editReply(
+        `Không tìm thấy thời gian bảo trì`
+      );
+    }
   const lines = [
-    "Đây là thông tin bảo trì sắp tới mà tao tìm được (thời gian hiển thị theo múi giờ của mày):",
+    "Đây là thông tin bảo trì sắp tới mà tôi tìm được (thời gian hiển thị theo múi giờ của bạn):",
     `**Bắt đầu:** <t:${startUnix}:F> (<t:${startUnix}:R>).`,
   ];
 

@@ -10,7 +10,6 @@ const {
 const roadmapCommand = require("./src/features/roadmap");
 const sharecashCommand = require("./src/features/sharecash");
 const maintCommand = require("./src/features/maint");
-const jobdiscCommand = require("./src/features/jobdisc");
 const linksCommand = require("./src/features/links");
 const bossCommand = require("./src/features/boss");
 const defroomCommand = require("./src/features/defroom");
@@ -18,7 +17,7 @@ const frzCommand = require("./src/features/frz");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
 
 const postedNews = loadPostedNews();
 

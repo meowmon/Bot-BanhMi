@@ -26,7 +26,7 @@ const PENDING_TIMEOUT_MS = 5 * 60 * 1000; // 5 phút
 
 const data = {
   name: "frz",
-  description: "Gọi Frenzy",
+  description: "Xin tap Frenzy",
   options: [
     {
       type: "string",
@@ -64,7 +64,7 @@ async function execute(interaction) {
   const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
   const frenzyRoleId = process.env.FRENZY_ROLE_ID;
   const roleMention = `<@&${frenzyRoleId}>` ;
-  const msgContent = `${roleMention} char: ${name} - số tap còn lại: ${provisionalRemaining} ⏳`;
+  const msgContent = `${roleMention} <@${userId}> char: ${name} - số tap còn lại: ${provisionalRemaining} ⏳`;
 
   let sentMessage;
   if (frenzyChannelId && interaction.channelId !== frenzyChannelId) {

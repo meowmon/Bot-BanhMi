@@ -5,13 +5,12 @@ const { REST, Routes, SlashCommandBuilder } = require("discord.js");
 const roadmapCommand = require("./src/features/roadmap");
 const sharecashCommand = require("./src/features/sharecash");
 const maintCommand = require("./src/features/maint");
-const jobdiscCommand = require("./src/features/jobdisc");
 const linksCommand = require("./src/features/links");
 const bossCommand = require("./src/features/boss");
 const defroomCommand = require("./src/features/defroom");
 const frzCommand = require("./src/features/frz");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
 
 const commandData = commands.map((cmd) => {
   const builder = new SlashCommandBuilder()
