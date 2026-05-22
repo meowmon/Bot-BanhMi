@@ -11,9 +11,14 @@ const roadmapCommand = require("./src/features/roadmap");
 const sharecashCommand = require("./src/features/sharecash");
 const maintCommand = require("./src/features/maint");
 const jobdiscCommand = require("./src/features/jobdisc");
-const xuancutCommand = require("./src/features/xuancut");
+const linksCommand = require("./src/features/links");
+const bossCommand = require("./src/features/boss");
+const defroomCommand = require("./src/features/defroom");
+const frzCommand = require("./src/features/frz");
+const { handleReaction: handleFrzReaction } = require("./src/features/frz");
+const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand, xuancutCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, jobdiscCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
 
 const postedNews = loadPostedNews();
 
@@ -22,12 +27,26 @@ client.once("clientReady", async () => {
 
   // Register slash commands
   const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
-  const commandData = commands.map((cmd) =>
-    new SlashCommandBuilder()
+  const commandData = commands.map((cmd) => {
+    const builder = new SlashCommandBuilder()
       .setName(cmd.data.name)
-      .setDescription(cmd.data.description)
-      .toJSON()
-  );
+      .setDescription(cmd.data.description);
+
+    if (cmd.data.options) {
+      cmd.data.options.forEach((opt) => {
+        if (opt.type === "string") {
+          builder.addStringOption((o) =>
+            o.setName(opt.name)
+              .setDescription(opt.description)
+              .setRequired(opt.required ?? false)
+              .setAutocomplete(opt.autocomplete ?? false)
+          );
+        }
+      });
+    }
+
+    return builder.toJSON();
+  });
 
   try {
     // Xóa guild commands nếu có (dọn duplicate)
@@ -51,9 +70,24 @@ client.once("clientReady", async () => {
 
   await checkMaintenance(postedNews);
   scheduleMaintenance(postedNews);
+
+  // Reset frz count mỗi thứ 5 lúc 0h UTC
+  const cron = require("node-cron");
+  cron.schedule("0 0 * * 4", () => {
+    resetFrzCount();
+    console.log("🔄 Đã reset frz count (thứ 5 0h UTC)");
+  }, { timezone: "UTC" });
 });
 
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isAutocomplete()) {
+    const command = commands.find((cmd) => cmd.data.name === interaction.commandName);
+    if (command?.handleAutocomplete) {
+      await command.handleAutocomplete(interaction).catch(console.error);
+    }
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) return;
 
   const command = commands.find((cmd) => cmd.data.name === interaction.commandName);
@@ -70,6 +104,13 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.reply(msg);
     }
   }
+});
+
+client.on("messageReactionAdd", async (reaction, user) => {
+  if (reaction.partial) {
+    try { await reaction.fetch(); } catch { return; }
+  }
+  await handleFrzReaction(reaction, user);
 });
 
 client.login(process.env.DISCORD_TOKEN);
