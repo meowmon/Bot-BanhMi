@@ -25,6 +25,8 @@ const GUIDE_TEXT = `
 **🔧 Maintenance** \`/maint\` — Kiểm tra lịch bảo trì
 
 **🔗 Links** \`/links\` — Danh sách link hữu ích
+
+**☀️ Sunny Sunday** \`/sunny\` — Xem lịch Sunny Sunday từ patch notes mới nhất
 `.trim();
 
 let lastGuideMessageId = null;
