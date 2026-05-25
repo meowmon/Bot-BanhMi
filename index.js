@@ -16,7 +16,7 @@ const defroomCommand = require("./src/features/defroom");
 const frzCommand = require("./src/features/frz");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
-const { handleStickyMessage, postInitialGuide } = require("./src/features/sticky");
+const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
 
 const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
 
@@ -114,6 +114,7 @@ client.on("interactionCreate", async (interaction) => {
 
   try {
     await command.execute(interaction);
+    await handleStickyInteraction(interaction);
   } catch (err) {
     console.error(err);
     const msg = { content: "❌ Có lỗi xảy ra khi thực hiện lệnh.", ephemeral: true };
