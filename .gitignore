@@ -1,2 +1,4 @@
 node_modules/
 .env
+frz.json
+posted.json

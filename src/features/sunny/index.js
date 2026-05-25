@@ -56,7 +56,7 @@ async function fetchSunnyData() {
   return { patchNotes, rows };
 }
 
-// Trích xuất danh sách perk từ ô bảng, giữ cấu trúc lồng nhau
+// Trích xuất perk, flatten sub-items thành cùng cấp
 function extractPerks($, td) {
   const lines = [];
   $(td).find("> ul > li").each((i, li) => {
@@ -64,26 +64,24 @@ function extractPerks($, td) {
     const directText = $li.clone().children("ul, ol").remove().end().text().trim();
     if (directText) lines.push(`• ${directText}`);
     $li.find("li").each((j, subli) => {
-      lines.push(`  ↳ ${$(subli).text().trim()}`);
+      lines.push(`• ${$(subli).text().trim()}`);
     });
   });
   return lines;
 }
 
-// Trả về index của hàng ứng với tuần hiện tại (Chủ nhật gần nhất <= hôm nay)
-function getCurrentSundayIdx(rows) {
+// Tách rows thành past/future theo ngày UTC
+function splitRows(rows) {
   const now = new Date();
   const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-
-  let currentIdx = -1;
-  for (let i = 0; i < rows.length; i++) {
-    const d = new Date(rows[i].date);
-    if (isNaN(d)) continue;
-    const rowUtc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-    if (rowUtc <= todayUtc) currentIdx = i;
-    else break;
+  const past = [];
+  const future = [];
+  for (const row of rows) {
+    const d = new Date(row.date);
+    const rowUtc = isNaN(d) ? Infinity : Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    (rowUtc < todayUtc ? past : future).push(row);
   }
-  return currentIdx;
+  return { past, future };
 }
 
 async function execute(interaction) {
@@ -96,21 +94,41 @@ async function execute(interaction) {
       return interaction.editReply({ content: "❌ Không tìm thấy dữ liệu Sunny Sunday." });
     }
 
-    const currentIdx = getCurrentSundayIdx(rows);
+    const { past, future } = splitRows(rows);
     const articleUrl = `https://www.nexon.com/maplestory/news/update/${patchNotes.id}/`;
 
+    // Trích version từ tên bài viết (vd: "v.268 - ...")
+    const versionMatch = patchNotes.name.match(/v\.\d+/);
+    const version = versionMatch ? versionMatch[0] : "";
+
+    // Dòng countdown đến event tiếp theo
+    let headerLines = [];
+    if (future.length > 0) {
+      const nextDate = new Date(future[0].date);
+      if (!isNaN(nextDate)) {
+        const nextUnix = Math.floor(nextDate.getTime() / 1000);
+        headerLines.push(`The next sunny sunday begins <t:${nextUnix}:R>.`);
+      }
+    }
+    if (past.length > 0) {
+      headerLines.push(`${past.length} sunny sunday${past.length > 1 ? "s" : ""} that already occurred are no longer listed.`);
+    }
+
+    // Build danh sách event
+    const eventLines = [];
+    for (const row of future) {
+      eventLines.push(`**${row.date}**`);
+      eventLines.push(...row.perks);
+      eventLines.push("");
+    }
+
+    const description = [...headerLines, "", ...eventLines].join("\n").trim();
+
     const embed = new EmbedBuilder()
-      .setTitle("☀️ Sunny Sunday")
+      .setTitle(`☀️ Sunny Sundays ${version} (${future.length})`)
       .setURL(articleUrl)
       .setColor(0xff8c00)
-      .setFooter({ text: patchNotes.name });
-
-    rows.forEach((row, i) => {
-      const isCurrentWeek = i === currentIdx;
-      const fieldName = isCurrentWeek ? `📅 ${row.date}  ← tuần này` : row.date;
-      const fieldValue = row.perks.join("\n") || "—";
-      embed.addFields({ name: fieldName, value: fieldValue });
-    });
+      .setDescription(description);
 
     await interaction.editReply({ embeds: [embed] });
   } catch (err) {
