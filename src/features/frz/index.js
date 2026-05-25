@@ -67,16 +67,17 @@ async function execute(interaction) {
 
   const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
   const frenzyRoleId = process.env.FRENZY_ROLE_ID;
-  const roleMention = `<@&${frenzyRoleId}>` ;
-  const msgContent = `${roleMention} <@${userId}> char: ${name} - số tap còn lại: ${provisionalRemaining} ⏳`;
+  const msgContent = `<@&${frenzyRoleId}> <@${userId}> char: ${name} - số tap còn lại: ${provisionalRemaining} ⏳`;
+
+  const allowedMentions = { roles: [frenzyRoleId], users: [userId] };
 
   let sentMessage;
   if (frenzyChannelId && interaction.channelId !== frenzyChannelId) {
     const frenzyChannel = await interaction.client.channels.fetch(frenzyChannelId);
-    sentMessage = await frenzyChannel.send(msgContent);
+    sentMessage = await frenzyChannel.send({ content: msgContent, allowedMentions });
     await interaction.reply({ content: `✅ Đã gửi đến <#${frenzyChannelId}>, react ✅ vào tin nhắn đó để xác nhận.`, ephemeral: true });
   } else {
-    sentMessage = await interaction.reply({ content: msgContent, fetchReply: true });
+    sentMessage = await interaction.reply({ content: msgContent, allowedMentions, fetchReply: true });
   }
 
   await sentMessage.react("✅");

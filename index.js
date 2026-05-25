@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-const { REST, Routes, SlashCommandBuilder } = require("discord.js");
 const client = require("./src/client");
 const { loadPostedNews } = require("./src/utils/store");
 const {
@@ -26,46 +25,6 @@ const postedNews = loadPostedNews();
 
 client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag}`);
-
-  // Register slash commands
-  const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
-  const commandData = commands.map((cmd) => {
-    const builder = new SlashCommandBuilder()
-      .setName(cmd.data.name)
-      .setDescription(cmd.data.description);
-
-    if (cmd.data.options) {
-      cmd.data.options.forEach((opt) => {
-        if (opt.type === "string") {
-          builder.addStringOption((o) =>
-            o.setName(opt.name)
-              .setDescription(opt.description)
-              .setRequired(opt.required ?? false)
-              .setAutocomplete(opt.autocomplete ?? false)
-          );
-        }
-      });
-    }
-
-    return builder.toJSON();
-  });
-
-  try {
-    // Xóa guild commands nếu có (dọn duplicate)
-    if (process.env.GUILD_ID) {
-      await rest.put(
-        Routes.applicationGuildCommands(client.user.id, process.env.GUILD_ID),
-        { body: [] }
-      );
-    }
-    // Register global commands
-    await rest.put(Routes.applicationCommands(client.user.id), {
-      body: commandData,
-    });
-    console.log("✅ Slash commands registered.");
-  } catch (err) {
-    console.error("Failed to register slash commands:", err);
-  }
 
   const testChannel = await client.channels.fetch(process.env.TEST_CHANNEL_ID);
   await testChannel.send("✅ Con bot này tày đã trở lại");

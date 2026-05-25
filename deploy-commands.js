@@ -9,8 +9,10 @@ const linksCommand = require("./src/features/links");
 const bossCommand = require("./src/features/boss");
 const defroomCommand = require("./src/features/defroom");
 const frzCommand = require("./src/features/frz");
+const frzonCommand = require("./src/features/frzon");
+const frzoffCommand = require("./src/features/frzoff");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand];
 
 const commandData = commands.map((cmd) => {
   const builder = new SlashCommandBuilder()
@@ -37,6 +39,9 @@ const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
+    console.log("Đang xóa global commands cũ...");
+    await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: [] });
+
     console.log("Đang xóa guild commands cũ...");
     if (process.env.GUILD_ID) {
       await rest.put(
