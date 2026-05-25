@@ -16,6 +16,7 @@ const defroomCommand = require("./src/features/defroom");
 const frzCommand = require("./src/features/frz");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
+const { handleStickyMessage, postInitialGuide } = require("./src/features/sticky");
 
 const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
 
@@ -70,6 +71,8 @@ client.once("clientReady", async () => {
   await checkMaintenance(postedNews);
   scheduleMaintenance(postedNews);
 
+  await postInitialGuide(client);
+
   // Reset frz count mỗi thứ 5 lúc 0h UTC
   const cron = require("node-cron");
   cron.schedule("0 0 * * 4", () => {
@@ -89,6 +92,23 @@ client.on("interactionCreate", async (interaction) => {
 
   if (!interaction.isChatInputCommand()) return;
 
+  // Channel guard
+  const botChannelId = process.env.BOT_CHANNEL_ID;
+  const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
+  if (botChannelId) {
+    const isBotChannel = interaction.channelId === botChannelId;
+    const isFrenzyChannel = frenzyChannelId && interaction.channelId === frenzyChannelId;
+    const isFrzCommand = interaction.commandName === "frz";
+
+    if (!isBotChannel && !(isFrzCommand && isFrenzyChannel)) {
+      const channel = botChannelId ? `<#${botChannelId}>` : "channel bot";
+      return interaction.reply({
+        content: `❌ Bạn không thể dùng bot tại đây, hãy vào ${channel} và thử lại.`,
+        ephemeral: true,
+      });
+    }
+  }
+
   const command = commands.find((cmd) => cmd.data.name === interaction.commandName);
   if (!command) return;
 
@@ -103,6 +123,10 @@ client.on("interactionCreate", async (interaction) => {
       await interaction.reply(msg);
     }
   }
+});
+
+client.on("messageCreate", async (message) => {
+  await handleStickyMessage(message);
 });
 
 client.on("messageReactionAdd", async (reaction, user) => {
