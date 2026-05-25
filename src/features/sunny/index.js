@@ -107,11 +107,8 @@ async function execute(interaction) {
       const nextDate = new Date(future[0].date);
       if (!isNaN(nextDate)) {
         const nextUnix = Math.floor(nextDate.getTime() / 1000);
-        headerLines.push(`The next sunny sunday begins <t:${nextUnix}:R>.`);
+        headerLines.push(`Sunny sunday tiếp theo sẽ bắt đầu vào <t:${nextUnix}:R>.`);
       }
-    }
-    if (past.length > 0) {
-      headerLines.push(`${past.length} sunny sunday${past.length > 1 ? "s" : ""} that already occurred are no longer listed.`);
     }
 
     // Build danh sách event
