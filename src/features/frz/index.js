@@ -39,7 +39,7 @@ const data = {
 
 async function execute(interaction) {
   if (!getFrzEnabled()) {
-    return interaction.reply({ content: "⛔ Hiện không thể xin frenzy, hãy thử lại vào khung giờ 10h - 18h.", ephemeral: true });
+    return interaction.reply({ content: "⛔ Hiện không thể xin frenzy, hãy thử lại vào khung giờ 9h - 18h.", ephemeral: true });
   }
 
   const userRoleLimit = ROLE_LIMITS.find((r) => {
