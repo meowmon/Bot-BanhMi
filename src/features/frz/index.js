@@ -19,10 +19,11 @@ const ROLE_LIMITS = [
 
 // pending: messageId -> { userId, max }
 const pendingMap = new Map();
-// prevent double-pending per user: userId -> messageId
-const pendingByUser = new Map();
+// cooldown: userId -> timestamp lần gửi gần nhất
+const cooldownMap = new Map();
 
 const PENDING_TIMEOUT_MS = 5 * 60 * 1000; // 5 phút
+const COOLDOWN_MS = 30 * 1000; // 30 giây
 
 const data = {
   name: "frz",
@@ -53,8 +54,11 @@ async function execute(interaction) {
 
   const userId = interaction.user.id;
 
-  if (pendingByUser.has(userId)) {
-    return interaction.reply({ content: "❌ Bạn đang có một tap chờ xác nhận, không thể gọi lại", ephemeral: true });
+  const now = Date.now();
+  const lastSent = cooldownMap.get(userId);
+  if (lastSent && now - lastSent < COOLDOWN_MS) {
+    const remaining = Math.ceil((COOLDOWN_MS - (now - lastSent)) / 1000);
+    return interaction.reply({ content: `⏳ Bạn cần chờ thêm **${remaining} giây** trước khi gửi lại.`, ephemeral: true });
   }
 
   const currentCount = getCount(userId);
@@ -82,15 +86,14 @@ async function execute(interaction) {
 
   await sentMessage.react("✅");
 
+  cooldownMap.set(userId, Date.now());
   pendingMap.set(sentMessage.id, { userId, max: userRoleLimit.max });
-  pendingByUser.set(userId, sentMessage.id);
 
   // Tự huỷ sau PENDING_TIMEOUT_MS nếu không react
   setTimeout(() => {
     if (!pendingMap.has(sentMessage.id)) return;
     pendingMap.delete(sentMessage.id);
-    pendingByUser.delete(userId);
-    sentMessage.edit(msgContent.replace(" ⏳", " ❌")).catch(() => {});
+    sentMessage.delete().catch(() => {});
   }, PENDING_TIMEOUT_MS);
 }
 
@@ -106,7 +109,6 @@ async function handleReaction(reaction, user) {
   if (!member || !isApprover(member)) return;
 
   pendingMap.delete(reaction.message.id);
-  pendingByUser.delete(pending.userId);
 
   incrementCount(pending.userId);
 
