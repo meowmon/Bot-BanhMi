@@ -14,11 +14,13 @@ const linksCommand = require("./src/features/links");
 const bossCommand = require("./src/features/boss");
 const defroomCommand = require("./src/features/defroom");
 const frzCommand = require("./src/features/frz");
+const frzonCommand = require("./src/features/frzon");
+const frzoffCommand = require("./src/features/frzoff");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand];
 
 const postedNews = loadPostedNews();
 
@@ -99,8 +101,16 @@ client.on("interactionCreate", async (interaction) => {
     const isBotChannel = interaction.channelId === botChannelId;
     const isFrenzyChannel = frenzyChannelId && interaction.channelId === frenzyChannelId;
     const isFrzCommand = interaction.commandName === "frz";
+    const isFrzToggle = interaction.commandName === "frzon" || interaction.commandName === "frzoff";
 
-    if (!isBotChannel && !(isFrzCommand && isFrenzyChannel)) {
+    if (isFrzToggle) {
+      if (!isFrenzyChannel) {
+        return interaction.reply({
+          content: `❌ Lệnh này chỉ dùng được trong <#${frenzyChannelId}>.`,
+          ephemeral: true,
+        });
+      }
+    } else if (!isBotChannel && !(isFrzCommand && isFrenzyChannel)) {
       const channel = botChannelId ? `<#${botChannelId}>` : "channel bot";
       return interaction.reply({
         content: `❌ Bạn không thể dùng bot tại đây, hãy vào ${channel} và thử lại.`,

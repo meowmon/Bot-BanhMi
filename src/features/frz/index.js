@@ -1,4 +1,4 @@
-const { incrementCount, getCount } = require("../../utils/frzStore");
+const { incrementCount, getCount, getFrzEnabled } = require("../../utils/frzStore");
 
 function isApprover(member) {
   const adminRoleId = process.env.FRZ_ADMIN_ROLE_ID;
@@ -38,6 +38,10 @@ const data = {
 };
 
 async function execute(interaction) {
+  if (!getFrzEnabled()) {
+    return interaction.reply({ content: "⛔ Hiện không thể xin frenzy, hãy thử lại vào khung giờ 10h - 18h.", ephemeral: true });
+  }
+
   const userRoleLimit = ROLE_LIMITS.find((r) => {
     const roleId = process.env[r.envKey];
     return roleId && interaction.member.roles.cache.has(roleId);

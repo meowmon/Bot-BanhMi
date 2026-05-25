@@ -28,7 +28,20 @@ function getCount(userId) {
 }
 
 function resetCount() {
-  save({ users: {} });
+  const data = load();
+  data.users = {};
+  save(data);
 }
 
-module.exports = { incrementCount, getCount, resetCount };
+function getFrzEnabled() {
+  const data = load();
+  return data.enabled !== false; // mặc định true nếu chưa có
+}
+
+function setFrzEnabled(value) {
+  const data = load();
+  data.enabled = value;
+  save(data);
+}
+
+module.exports = { incrementCount, getCount, resetCount, getFrzEnabled, setFrzEnabled };
