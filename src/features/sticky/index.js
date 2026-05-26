@@ -27,6 +27,8 @@ const GUIDE_TEXT = `
 **🔗 Links** \`/links\` — Danh sách link hữu ích
 
 **☀️ Sunny Sunday** \`/sunny\` — Xem lịch Sunny Sunday từ patch notes mới nhất
+
+**Lưu ý** — Message hướng dẫn này sẽ luôn ở dưới cùng của channel, do đó phản hồi lệnh của bạn sẽ được gửi phía trên nó. Nếu bạn không thấy phản hồi, hãy cuộn lên trên một chút nhé!
 `.trim();
 
 let lastGuideMessageId = null;
