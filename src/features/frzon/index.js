@@ -20,6 +20,18 @@ async function execute(interaction) {
     return interaction.reply({ content: "❌ Bạn không có quyền sử dụng lệnh này.", ephemeral: true });
   }
   setFrzEnabled(true);
+
+  const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
+  const banhMiRoleId = process.env.BANH_MI_ROLE_ID;
+  if (frenzyChannelId && banhMiRoleId) {
+    try {
+      const channel = await interaction.client.channels.fetch(frenzyChannelId);
+      await channel.permissionOverwrites.edit(banhMiRoleId, { SendMessages: true });
+    } catch (err) {
+      console.error("[frzon] Không thể sửa permission channel:", err);
+    }
+  }
+
   await interaction.reply({ content: "✅ Lệnh `/frz` đã được **bật**.", ephemeral: true });
 }
 

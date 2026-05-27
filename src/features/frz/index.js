@@ -12,9 +12,9 @@ function isApprover(member) {
 }
 
 const ROLE_LIMITS = [
-  { envKey: "FRZ_ROLE_30_ID", max: 30 },
-  { envKey: "FRZ_ROLE_20_ID", max: 20 },
-  { envKey: "FRZ_ROLE_10_ID", max: 10 },
+  { envKey: "FRZ_ROLE_30_ID", max: 50 },
+  { envKey: "FRZ_ROLE_20_ID", max: 36 },
+  { envKey: "FRZ_ROLE_10_ID", max: 21 },
 ];
 
 // pending: messageId -> { userId, max }

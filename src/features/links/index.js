@@ -7,7 +7,8 @@ const data = {
 
 async function execute(interaction) {
   await interaction.reply({
-    content:
+    content:                  
+      "Link mời bạn bè vào discord này: [LINK INVITE](https://discord.com/invite/banhmivietnam)\n" +
       "Reddit danh sách discord các class: [LINK](https://www.reddit.com/r/Maplestory/comments/1b8zv9o/master_list_of_all_class_discords/)\n" +
       "Cashop sale leak: [LINK](https://masonym.dev/cash-shop)\n" +
       "Rate các GACHA cashshop: [LINK](https://www.nexon.com/maplestory/general-post/5805)\n" +
