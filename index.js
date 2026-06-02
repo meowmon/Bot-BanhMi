@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const { joinVoiceChannel } = require("@discordjs/voice");
 const client = require("./src/client");
 const { loadPostedNews } = require("./src/utils/store");
 const {
@@ -19,6 +20,7 @@ const sunnyCommand = require("./src/features/sunny");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
+const { checkEventEnding, scheduleEventReminder } = require("./src/features/eventreminder");
 
 const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand];
 
@@ -27,6 +29,23 @@ const postedNews = loadPostedNews();
 client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag}`);
 
+  // Auto join voice channel on ready
+  try {
+    const voiceChannel = await client.channels.fetch(process.env.DEFROOM_ID);
+    if (voiceChannel?.isVoiceBased()) {
+      joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: voiceChannel.guild.id,
+        adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+        selfDeaf: true,
+        selfMute: true,
+      });
+      console.log(`✅ Đã join voice channel: ${voiceChannel.name}`);
+    }
+  } catch (err) {
+    console.error("❌ Không thể join voice channel:", err.message);
+  }
+
   const testChannel = await client.channels.fetch(process.env.TEST_CHANNEL_ID);
   await testChannel.send("✅ Con bot này tày đã trở lại");
 
@@ -34,6 +53,9 @@ client.once("clientReady", async () => {
   scheduleMaintenance(postedNews);
 
   await postInitialGuide(client);
+
+  await checkEventEnding();
+  scheduleEventReminder();
 
   // Reset frz count mỗi thứ 5 lúc 0h UTC
   const cron = require("node-cron");
@@ -55,10 +77,12 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   // Channel guard
-  const botChannelId = process.env.BOT_CHANNEL_ID;
+  const botChannelIds = process.env.BOT_CHANNEL_IDS
+    ? process.env.BOT_CHANNEL_IDS.split(",").map((id) => id.trim()).filter(Boolean)
+    : [];
   const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
-  if (botChannelId) {
-    const isBotChannel = interaction.channelId === botChannelId;
+  if (botChannelIds.length > 0 || frenzyChannelId) {
+    const isBotChannel = botChannelIds.includes(interaction.channelId);
     const isFrenzyChannel = frenzyChannelId && interaction.channelId === frenzyChannelId;
     const isFrzCommand = interaction.commandName === "frz";
     const isFrzToggle = interaction.commandName === "frzon" || interaction.commandName === "frzoff";
@@ -70,10 +94,19 @@ client.on("interactionCreate", async (interaction) => {
           ephemeral: true,
         });
       }
-    } else if (!isBotChannel && !(isFrzCommand && isFrenzyChannel)) {
-      const channel = botChannelId ? `<#${botChannelId}>` : "channel bot";
+    } else if (isFrzCommand) {
+      // /frz chỉ dùng trong frenzy channel và các bot channel
+      if (!isFrenzyChannel && !isBotChannel) {
+        const allowed = [frenzyChannelId, ...botChannelIds].filter(Boolean).map((id) => `<#${id}>`).join(", ");
+        return interaction.reply({
+          content: `❌ Lệnh /frz chỉ dùng được trong: ${allowed || "channel được phép"}.`,
+          ephemeral: true,
+        });
+      }
+    } else if (!isBotChannel) {
+      const channelList = botChannelIds.map((id) => `<#${id}>`).join(", ");
       return interaction.reply({
-        content: `❌ Bạn không thể dùng bot tại đây, hãy vào ${channel} và thử lại.`,
+        content: `❌ Bạn không thể dùng bot tại đây, hãy vào ${channelList || "channel bot"} và thử lại.`,
         ephemeral: true,
       });
     }
