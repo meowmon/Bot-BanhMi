@@ -12,14 +12,38 @@ const frzCommand = require("./src/features/frz");
 const frzonCommand = require("./src/features/frzon");
 const frzoffCommand = require("./src/features/frzoff");
 const sunnyCommand = require("./src/features/sunny");
+const frzadminCommand = require("./src/features/frzadmin");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand];
 
 const commandData = commands.map((cmd) => {
   const builder = new SlashCommandBuilder()
     .setName(cmd.data.name)
     .setDescription(cmd.data.description);
 
+  // Subcommands
+  if (cmd.data.subcommands) {
+    cmd.data.subcommands.forEach((sub) => {
+      builder.addSubcommand((s) => {
+        s.setName(sub.name).setDescription(sub.description);
+        if (sub.options) {
+          sub.options.forEach((opt) => {
+            if (opt.type === "user") {
+              s.addUserOption((o) => o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? false));
+            } else if (opt.type === "integer") {
+              s.addIntegerOption((o) => o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? false));
+            } else if (opt.type === "string") {
+              s.addStringOption((o) => o.setName(opt.name).setDescription(opt.description).setRequired(opt.required ?? false));
+            }
+          });
+        }
+        return s;
+      });
+    });
+    return builder.toJSON();
+  }
+
+  // Simple options
   if (cmd.data.options) {
     cmd.data.options.forEach((opt) => {
       if (opt.type === "string") {

@@ -46,4 +46,15 @@ function setFrzEnabled(value) {
   save(data);
 }
 
-module.exports = { incrementCount, getCount, resetCount, getFrzEnabled, setFrzEnabled };
+function getAllCounts() {
+  const data = load();
+  return data.users ?? {};
+}
+
+function setCount(userId, count) {
+  const data = load();
+  data.users[userId] = count;
+  save(data);
+}
+
+module.exports = { incrementCount, getCount, getAllCounts, setCount, resetCount, getFrzEnabled, setFrzEnabled };
