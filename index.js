@@ -78,11 +78,16 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   // Channel guard
+  const adminUserIds = process.env.FRZ_ADMIN_USER_IDS
+    ? process.env.FRZ_ADMIN_USER_IDS.split(",").map((id) => id.trim())
+    : [];
+  const isOwner = adminUserIds.includes(interaction.user.id);
+
   const botChannelIds = process.env.BOT_CHANNEL_IDS
     ? process.env.BOT_CHANNEL_IDS.split(",").map((id) => id.trim()).filter(Boolean)
     : [];
   const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
-  if (botChannelIds.length > 0 || frenzyChannelId) {
+  if (!isOwner && (botChannelIds.length > 0 || frenzyChannelId)) {
     const isBotChannel = botChannelIds.includes(interaction.channelId);
     const isFrenzyChannel = frenzyChannelId && interaction.channelId === frenzyChannelId;
     const isFrzCommand = interaction.commandName === "frz";
