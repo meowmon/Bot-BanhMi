@@ -32,23 +32,23 @@ const GUIDE_TEXT = `
 `.trim();
 
 let lastGuideMessageId = null;
-const lastGuideMessageIds = new Map(); // channelId -> messageId
 
-function getBotChannelIds() {
-  return process.env.BOT_CHANNEL_IDS
+function getBotCommandChannelId() {
+  // Chỉ dùng channel đầu tiên trong BOT_CHANNEL_IDS làm bot-command channel
+  const ids = process.env.BOT_CHANNEL_IDS
     ? process.env.BOT_CHANNEL_IDS.split(",").map((id) => id.trim()).filter(Boolean)
     : [];
+  return ids[0] ?? null;
 }
 
 async function repostGuide(channel) {
   try {
-    const oldId = lastGuideMessageIds.get(channel.id) ?? lastGuideMessageId;
-    if (oldId) {
-      const oldMsg = await channel.messages.fetch(oldId).catch(() => null);
+    if (lastGuideMessageId) {
+      const oldMsg = await channel.messages.fetch(lastGuideMessageId).catch(() => null);
       if (oldMsg) await oldMsg.delete().catch(() => {});
     }
     const newMsg = await channel.send(GUIDE_TEXT);
-    lastGuideMessageIds.set(channel.id, newMsg.id);
+    lastGuideMessageId = newMsg.id;
   } catch (err) {
     console.error("[sticky] Error updating guideline:", err);
   }
@@ -56,14 +56,14 @@ async function repostGuide(channel) {
 
 async function handleStickyMessage(message) {
   if (message.author.bot) return;
-  const channelIds = getBotChannelIds();
-  if (!channelIds.includes(message.channel.id)) return;
+  const channelId = getBotCommandChannelId();
+  if (!channelId || message.channel.id !== channelId) return;
   await repostGuide(message.channel);
 }
 
 async function handleStickyInteraction(interaction) {
-  const channelIds = getBotChannelIds();
-  if (!channelIds.includes(interaction.channelId)) return;
+  const channelId = getBotCommandChannelId();
+  if (!channelId || interaction.channelId !== channelId) return;
   await repostGuide(interaction.channel);
 }
 
@@ -72,19 +72,17 @@ async function handleStickyInteraction(interaction) {
  * Gọi sau khi client ready.
  */
 async function postInitialGuide(client) {
-  const channelIds = getBotChannelIds();
-  if (channelIds.length === 0) return;
+  const channelId = getBotCommandChannelId();
+  if (!channelId) return;
 
-  for (const channelId of channelIds) {
-    try {
-      const channel = await client.channels.fetch(channelId).catch(() => null);
-      if (!channel) continue;
-      const newMsg = await channel.send(GUIDE_TEXT);
-      lastGuideMessageIds.set(channelId, newMsg.id);
-      console.log(`[sticky] Guideline posted in channel ${channelId}.`);
-    } catch (err) {
-      console.error(`[sticky] Failed to post initial guideline in ${channelId}:`, err);
-    }
+  try {
+    const channel = await client.channels.fetch(channelId).catch(() => null);
+    if (!channel) return;
+    const newMsg = await channel.send(GUIDE_TEXT);
+    lastGuideMessageId = newMsg.id;
+    console.log("[sticky] Guideline posted on startup.");
+  } catch (err) {
+    console.error("[sticky] Failed to post initial guideline:", err);
   }
 }
 
