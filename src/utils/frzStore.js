@@ -1,7 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const FRZ_FILE = path.join(__dirname, "../../frz.json");
+const FRZ_FILE = process.env.FRZ_DATA_PATH
+  ? path.resolve(process.env.FRZ_DATA_PATH)
+  : path.join(__dirname, "../../frz.json");
 
 function load() {
   try {

@@ -54,8 +54,8 @@ client.once("clientReady", async () => {
 
   await postInitialGuide(client);
 
-  await checkEventEnding();
-  scheduleEventReminder();
+  // await checkEventEnding();
+  // scheduleEventReminder();
 
   // Reset frz count mỗi thứ 5 lúc 0h UTC
   const cron = require("node-cron");

@@ -1,6 +1,9 @@
 const fs = require("fs");
+const path = require("path");
 
-const POSTED_FILE = "posted.json";
+const POSTED_FILE = process.env.POSTED_DATA_PATH
+  ? path.resolve(process.env.POSTED_DATA_PATH)
+  : path.join(__dirname, "../../posted.json");
 
 function loadPostedNews() {
   try {

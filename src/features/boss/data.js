@@ -14,7 +14,7 @@ const bosses = [
   { id: "gloom",         name: "Gloom",              image: "gloom.png", link: null },
   { id: "gollux",        name: "Gollux",             image: null, link: null },
   { id: "hilla",         name: "Hilla",              image: null, link: null },
-  { id: "kai",        name: "Kai",             image: "kai.pngss", link: "https://docs.google.com/document/d/1-EGNGurvs9m1K10XyrwNxyyTRs6dUzHrOUXRDOj4pxg/edit?tab=t.0" },
+  { id: "kai",        name: "Kai",             image: "kai.png", link: "https://docs.google.com/document/d/1-EGNGurvs9m1K10XyrwNxyyTRs6dUzHrOUXRDOj4pxg/edit?tab=t.0" },
   { id: "kaling",        name: "Kaling",             image: "kaling.png", link: "https://docs.google.com/document/d/1Z_sSCSLkGjTC6-n_l6UdQAROyx6LYAVZk_5WWdF4aj0/edit?usp=sharing" },
   { id: "kalos",         name: "Kalos",              image: "kalos.png", link: "https://docs.google.com/document/d/1fyTRDNuo5mdAuFrPRVJKEKjG_SpHAkNjPtrKkx2Ruj0/edit?usp=sharing" },
   { id: "malefic",         name: "Malefic Star",              image: "malefic.png", link: "https://docs.google.com/document/d/1GyC2pgnoCVcpKjrn5WiMyMzPQI6TZY74sHj6xyJMg4o/edit?tab=t.0#heading=h.51vnqb39n258" },
