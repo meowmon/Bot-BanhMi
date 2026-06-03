@@ -1,4 +1,5 @@
 const { getAllCounts, setCount, resetCount } = require("../../utils/frzStore");
+const { loadPostedNews, savePostedNews } = require("../../utils/store");
 
 function isAdmin(member) {
   const adminRoleId = process.env.FRZ_ADMIN_ROLE_ID;
@@ -24,6 +25,15 @@ const data = {
       ],
     },
     { name: "reset", description: "Reset toàn bộ tap count về 0" },
+    { name: "posted-view", description: "Xem danh sách ID đã đăng trong posted.json" },
+    {
+      name: "posted-remove",
+      description: "Xóa một ID khỏi posted.json (để bot đăng lại)",
+      options: [
+        { type: "string", name: "id", description: "ID bài cần xóa", required: true },
+      ],
+    },
+    { name: "posted-clear", description: "Xóa toàn bộ dữ liệu trong posted.json" },
   ],
 };
 
@@ -65,6 +75,44 @@ async function execute(interaction) {
   if (sub === "reset") {
     resetCount();
     return interaction.reply({ content: "🔄 Đã reset toàn bộ tap count về 0.", ephemeral: true });
+  }
+
+  if (sub === "posted-view") {
+    const posted = loadPostedNews();
+    const ids = [...posted];
+    if (ids.length === 0) {
+      return interaction.reply({ content: "📋 `posted.json` đang trống.", ephemeral: true });
+    }
+    return interaction.reply({
+      content: `📋 **posted.json (${ids.length} ID):**\n\`\`\`\n${ids.join(", ")}\n\`\`\``,
+      ephemeral: true,
+    });
+  }
+
+  if (sub === "posted-remove") {
+    const idStr = interaction.options.getString("id");
+    const id = Number(idStr);
+    if (isNaN(id)) {
+      return interaction.reply({ content: "❌ ID không hợp lệ, phải là số.", ephemeral: true });
+    }
+    const posted = loadPostedNews();
+    if (!posted.has(id)) {
+      return interaction.reply({ content: `❌ ID \`${id}\` không có trong posted.json.`, ephemeral: true });
+    }
+    posted.delete(id);
+    savePostedNews(posted);
+    return interaction.reply({
+      content: `✅ Đã xóa ID \`${id}\` khỏi posted.json. Khởi động lại bot để có hiệu lực ngay.`,
+      ephemeral: true,
+    });
+  }
+
+  if (sub === "posted-clear") {
+    savePostedNews(new Set());
+    return interaction.reply({
+      content: "✅ Đã xóa toàn bộ posted.json. Khởi động lại bot để có hiệu lực ngay.",
+      ephemeral: true,
+    });
   }
 }
 

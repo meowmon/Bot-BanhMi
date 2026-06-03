@@ -126,11 +126,15 @@ client.on("interactionCreate", async (interaction) => {
     await handleStickyInteraction(interaction);
   } catch (err) {
     console.error(err);
-    const msg = { content: "❌ Có lỗi xảy ra khi thực hiện lệnh.", ephemeral: true };
-    if (interaction.replied || interaction.deferred) {
-      await interaction.followUp(msg);
-    } else {
-      await interaction.reply(msg);
+    const msg = { content: "❌ Có lỗi xảy ra khi thực hiện lệnh.", flags: 64 };
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp(msg);
+      } else {
+        await interaction.reply(msg);
+      }
+    } catch (replyErr) {
+      console.error("[error handler] Failed to send error reply:", replyErr.message);
     }
   }
 });
