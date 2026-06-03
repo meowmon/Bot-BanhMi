@@ -18,12 +18,13 @@ const frzonCommand = require("./src/features/frzon");
 const frzoffCommand = require("./src/features/frzoff");
 const sunnyCommand = require("./src/features/sunny");
 const frzadminCommand = require("./src/features/frzadmin");
+const frzcheckCommand = require("./src/features/frzcheck");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
 const { checkEventEnding, scheduleEventReminder } = require("./src/features/eventreminder");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand];
 
 const postedNews = loadPostedNews();
 
