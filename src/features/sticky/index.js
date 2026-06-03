@@ -15,6 +15,7 @@ const GUIDE_TEXT = `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 **⚔️ Frenzy** \`/frz [name]\` — Xin tap Frenzy (Bạn cần được cấp quyền để dùng lệnh này)
 > Counter reset mỗi thứ 5 lúc 0:00 UTC
+**⚔️ Frenzy check** \`/frzcheck\` — Xem số lần Frenzy còn lại trong tuần của bạn
 
 **👹 Boss** \`/boss\` — Xem thông tin boss (kèm guide)
 
