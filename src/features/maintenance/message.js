@@ -7,12 +7,12 @@ const TZ_OFFSETS = {
 };
 
 function parseMaintenanceTimes(summary, bodyText) {
-  const startMatch = summary.match(
+  const normalizedSummary = summary.replace(/\u00A0/g, " ");
+  const startMatch = normalizedSummary.match(
     /starting on \w+, (\w+ \d+, \d+) at (\d+:\d+ [AP]M) (\w+)/
   );
-  const endMatch = bodyText.match(
-    /concluding around (\d+:\d+ [AP]M) (\w+)/
-  );
+  const pdtMatches = [...bodyText.matchAll(/(\d+:\d+ [AP]M) (PDT|PST)/g)];
+  const endMatch = pdtMatches.length >= 2 ? pdtMatches[pdtMatches.length - 1] : null;
   const durationMatch = bodyText.match(/last approximately (\d+) hours?/);
 
   if (!startMatch) return null;

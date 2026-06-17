@@ -14,8 +14,9 @@ const frzoffCommand = require("./src/features/frzoff");
 const sunnyCommand = require("./src/features/sunny");
 const frzadminCommand = require("./src/features/frzadmin");
 const frzcheckCommand = require("./src/features/frzcheck");
+const adminCommand = require("./src/features/admin");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand, adminCommand];
 
 const commandData = commands.map((cmd) => {
   const builder = new SlashCommandBuilder()
