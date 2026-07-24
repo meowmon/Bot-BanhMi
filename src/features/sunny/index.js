@@ -48,7 +48,8 @@ async function fetchSunnyData() {
   $("tr").each((i, row) => {
     const cells = $(row).find("td");
     if (cells.length < 2) return;
-      const date = $(cells[0]).contents().filter((_, n) => n.type === "text").first().text().trim();
+      let date = $(cells[0]).contents().filter((_, n) => n.type === "text").first().text().trim();
+      if (!date) date = $(cells[0]).text().trim();
     const perks = extractPerks($, cells[1]);
     if (date && perks.length) rows.push({ date, perks });
   });
