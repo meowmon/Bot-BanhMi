@@ -20,8 +20,8 @@ async function execute(interaction) {
       "Flame Simulator: [LINK](https://www.whackybeanz.com/calc/equips/flames)\n" +
       "Check Boss Crystals: [LINK](https://zydico.github.io/Website/#/maplestory-helper/boss-crystals)\n" +
       "Check sức mạnh tổng thể acc: [Maple Scouter](https://maplescouter.com/input)\n" +
-      "Check map farm / train: [Máp](https://maplemaps.net/)\n" +
-      "Website mua frz Sunny: [Sunny](https://maplemaps.net/)\n",
+      "Check map farm / train: [Maps](https://maplemaps.net/)\n" +
+      "Website mua frz Sunny: [Sunny](https://inaribot.io/)\n",
     flags: MessageFlags.SuppressEmbeds,
   });
 }
