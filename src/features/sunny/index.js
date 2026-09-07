@@ -120,7 +120,10 @@ async function execute(interaction) {
       eventLines.push("");
     }
 
-    const description = [...headerLines, "", ...eventLines].join("\n").trim();
+    // Hết mốc sắp tới -> description rỗng, setDescription("") sẽ lỗi
+    const description =
+      [...headerLines, "", ...eventLines].join("\n").trim() ||
+      "Không còn Sunny Sunday nào sắp tới trong patch notes này.";
 
     const embed = new EmbedBuilder()
       .setTitle(`☀️ Sunny Sundays ${version} (${future.length})`)
