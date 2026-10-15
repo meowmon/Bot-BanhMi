@@ -11,10 +11,12 @@ async function fetchLatestMaintenance() {
       const title = post.name;
       return (
         post.category === "maintenance" &&
+        !post.isMSCW &&
         (title.includes("Minor Patch") ||
           title.includes("Game Update") ||
           title.includes("Server Maintenance") ||
-          title.includes("Scheduled Maintenance"))
+          title.includes("Scheduled Maintenance") ||
+          title.includes("Unscheduled Maintenance"))
       );
     }) ?? null
   );

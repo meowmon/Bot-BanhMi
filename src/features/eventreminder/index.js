@@ -56,7 +56,7 @@ async function fetchPatchNoteEvents() {
   const articles = await listRes.json();
 
   const patchNotes = articles.find(
-    (a) => a.name.toLowerCase().includes("patch notes") && a.category === "update"
+    (a) => a.name.toLowerCase().includes("patch notes") && a.category === "update" && !a.isMSCW
   );
   if (!patchNotes) throw new Error("No patch notes found");
 

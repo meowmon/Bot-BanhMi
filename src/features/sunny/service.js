@@ -34,7 +34,7 @@ async function fetchSunnyData() {
 
   // 2. Tìm bài patch notes đầu tiên
   const patchNotes = articles.find(
-    (a) => a.name.toLowerCase().includes("patch notes") && a.category === "update"
+    (a) => a.name.toLowerCase().includes("patch notes") && a.category === "update" && !a.isMSCW
   );
   if (!patchNotes) throw new Error("Không tìm thấy bài Patch Notes.");
 
