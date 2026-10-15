@@ -33,9 +33,13 @@ async function execute(interaction) {
     return interaction.reply({ content: "❌ Không tìm thấy boss này.", ephemeral: true });
   }
 
-  if (!boss.image && !boss.link) {
+  if (!boss.image && !boss.link && !boss.video) {
     return interaction.reply({ content: `**${boss.name}**: Chưa có thông tin.`, ephemeral: true });
   }
+
+  const lines = [];
+  if (boss.link) lines.push(`Click [LINK](${boss.link}) để xem guide vietsub`);
+  if (boss.video) lines.push(`Click [VIDEO](${boss.video}) để xem video guide`);
 
   if (boss.image) {
     const imagePath = path.join(__dirname, "../../../assets/boss", boss.image);
@@ -43,13 +47,13 @@ async function execute(interaction) {
     const embed = new EmbedBuilder()
       .setTitle(boss.name)
       .setImage(`attachment://${boss.image}`);
-    const content = boss.link ? `Click [LINK](${boss.link}) để xem guide vietsub` : undefined;
+    const content = lines.length ? lines.join("\n") : undefined;
     return interaction.reply({ content, embeds: [embed], files: [attachment] });
   }
 
-  // Chỉ có link
+  // Không có ảnh: chỉ link/video
   return interaction.reply({
-    content: `**${boss.name}**: [Link guide vietsub](${boss.link})`,
+    content: `**${boss.name}**\n${lines.join("\n")}`,
     flags: MessageFlags.SuppressEmbeds,
   });
 }
