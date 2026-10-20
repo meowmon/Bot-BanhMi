@@ -22,12 +22,13 @@ const frzadminCommand = require("./src/features/frzadmin");
 const frzcheckCommand = require("./src/features/frzcheck");
 const adminCommand = require("./src/features/admin");
 const sunnytestCommand = require("./src/features/sunnytest");
+const chatCommand = require("./src/features/chat");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
 const { checkEventEnding, scheduleEventReminder } = require("./src/features/eventreminder");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand, adminCommand, sunnytestCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand, adminCommand, sunnytestCommand, chatCommand];
 
 const postedNews = loadPostedNews();
 
@@ -94,7 +95,7 @@ client.on("interactionCreate", async (interaction) => {
     ? process.env.BOT_CHANNEL_IDS.split(",").map((id) => id.trim()).filter(Boolean)
     : [];
   const frenzyChannelId = process.env.FRENZY_CHANNEL_ID;
-  if (!isOwner && (botChannelIds.length > 0 || frenzyChannelId)) {
+  if (interaction.commandName !== "chat" && !isOwner && (botChannelIds.length > 0 || frenzyChannelId)) {
     const isBotChannel = botChannelIds.includes(interaction.channelId);
     const isFrenzyChannel = frenzyChannelId && interaction.channelId === frenzyChannelId;
     const isFrzCommand = interaction.commandName === "frz";
