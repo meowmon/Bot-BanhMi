@@ -116,6 +116,7 @@ async function execute(interaction) {
 
 async function handleMessage(message) {
   if (
+    process.env.ASK_NOM_MESSAGE_CHAT !== "true" ||
     message.author.bot ||
     !message.inGuild() ||
     !getBotChannelIds().includes(message.channelId)
