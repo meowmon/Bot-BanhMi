@@ -46,7 +46,7 @@ async function askNom(key, question, rememberConversation = true) {
           ...history,
           { role: "user", content: question },
         ],
-        max_tokens: 700,
+        max_completion_tokens: 700,
       },
       {
         headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
