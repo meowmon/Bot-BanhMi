@@ -103,10 +103,17 @@ async function execute(interaction) {
 
   try {
     const answer = await askNom(key, question, rememberConversation);
-    const chunks = splitMessage(answer);
-    await interaction.editReply(chunks[0]);
+    const response = `**Câu hỏi của bạn:**\n${question}\n\n**Nom:**\n${answer}`;
+    const chunks = splitMessage(response);
+    await interaction.editReply({
+      content: chunks[0],
+      allowedMentions: { parse: [] },
+    });
     for (const chunk of chunks.slice(1)) {
-      await interaction.followUp({ content: chunk });
+      await interaction.followUp({
+        content: chunk,
+        allowedMentions: { parse: [] },
+      });
     }
   } catch (error) {
     console.error("[ask-nom] OpenAI request failed:", error.response?.status, error.response?.data?.error?.message || error.message);
