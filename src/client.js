@@ -4,6 +4,7 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
+    ...(process.env.BOT_CHANNEL_IDS?.split(",").some((id) => id.trim()) ? [GatewayIntentBits.MessageContent] : []),
     GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.GuildVoiceStates,
   ],

@@ -1,0 +1,12 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^node --check src\\\\features\\\\ask-nom\\\\index\\.js; if \\(\\$\\?\\) \\{ node --check index\\.js \\}; if \\(\\$\\?\\) \\{ node --check deploy-commands\\.js \\}; if \\(\\$\\?\\) \\{ node --check src\\\\client\\.js \\}$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node -e \"const \\{SlashCommandBuilder\\}=require\\('discord\\.js'\\); const cmd=require\\('\\./src/features/ask-nom'\\); const result=new SlashCommandBuilder\\(\\)\\.setName\\(cmd\\.data\\.name\\)\\.setDescription\\(cmd\\.data\\.description\\); for \\(const opt of cmd\\.data\\.options\\) result\\.addStringOption\\(o=>o\\.setName\\(opt\\.name\\)\\.setDescription\\(opt\\.description\\)\\.setRequired\\(opt\\.required\\)\\); console\\.log\\(JSON\\.stringify\\(result\\.toJSON\\(\\)\\)\\);\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

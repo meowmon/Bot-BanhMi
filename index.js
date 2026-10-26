@@ -23,12 +23,13 @@ const frzcheckCommand = require("./src/features/frzcheck");
 const adminCommand = require("./src/features/admin");
 const sunnytestCommand = require("./src/features/sunnytest");
 const chatCommand = require("./src/features/chat");
+const askNomCommand = require("./src/features/ask-nom");
 const { handleReaction: handleFrzReaction } = require("./src/features/frz");
 const { resetCount: resetFrzCount } = require("./src/utils/frzStore");
 const { handleStickyMessage, handleStickyInteraction, postInitialGuide } = require("./src/features/sticky");
 const { checkEventEnding, scheduleEventReminder } = require("./src/features/eventreminder");
 
-const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand, adminCommand, sunnytestCommand, chatCommand];
+const commands = [roadmapCommand, sharecashCommand, maintCommand, linksCommand, bossCommand, defroomCommand, frzCommand, frzonCommand, frzoffCommand, sunnyCommand, frzadminCommand, frzcheckCommand, adminCommand, sunnytestCommand, chatCommand, askNomCommand];
 
 const postedNews = loadPostedNews();
 
@@ -149,6 +150,7 @@ client.on("interactionCreate", async (interaction) => {
 
 client.on("messageCreate", async (message) => {
   await handleStickyMessage(message);
+  await askNomCommand.handleMessage(message);
 });
 
 client.on("messageReactionAdd", async (reaction, user) => {
